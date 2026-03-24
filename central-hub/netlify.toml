@@ -1,0 +1,47 @@
+[[redirects]]
+  from = "/climate/*"
+  to = "https://TUO-SITO-CLIMATE.netlify.app/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/meme/*"
+  to = "https://TUO-SITO-MEME.netlify.app/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/translator/*"
+  to = "https://TUO-SITO-TRANSLATOR.netlify.app/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/diary/*"
+  to = "https://TUO-SITO-DIARY.netlify.app/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/domino/*"
+  to = "https://TUO-SITO-DOMINO.netlify.app/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/portal/*"
+  to = "https://TUO-SITO-PORTAL.netlify.app/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/grocery/*"
+  to = "https://TUO-SITO-GROCERY.netlify.app/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/python/*"
+  to = "https://TUO-SITO-PYTHON.netlify.app/:splat"
+  status = 200
+  force = true
