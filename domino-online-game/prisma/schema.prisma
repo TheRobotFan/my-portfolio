@@ -1,0 +1,235 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  username      String    @unique
+  email         String?   @unique
+  passwordHash  String
+  avatar        String    @default("default")
+  level         Int       @default(1)
+  xp            Int       @default(0)
+  xpToNextLevel Int       @default(100)
+  createdAt     DateTime  @default(now())
+  lastLoginAt   DateTime  @default(now())
+  isOnline      Boolean   @default(false)
+  isGuest       Boolean   @default(true)
+  referralCode  String    @unique
+  referredBy    String?
+
+  stats         UserStats?
+  ranked        RankedData?
+  inventory     Inventory?
+  battlePass    UserBattlePass?
+  referrals     Referral[]        @relation("Referrer")
+  invitedBy     Referral?         @relation("Invitee")
+  rewards       ReferralReward[]
+  clanMember    ClanMember?
+  history       GameHistory[]
+  achievements  Achievement[]
+  transactions  Transaction[]
+}
+
+model UserStats {
+  userId          String @id
+  user            User   @relation(fields: [userId], references: [id])
+  wins            Int    @default(0)
+  losses          Int    @default(0)
+  streak          Int    @default(0)
+  highestStreak   Int    @default(0)
+  gamesPlayed     Int    @default(0)
+  totalPoints     Int    @default(0)
+  avgGameDuration Float  @default(0)
+}
+
+model RankedData {
+  userId       String   @id
+  user         User     @relation(fields: [userId], references: [id])
+  elo          Int      @default(800)
+  rank         String   @default("bronze")
+  tier         Int      @default(1)
+  wins         Int      @default(0)
+  losses       Int      @default(0)
+  winStreak    Int      @default(0)
+  highestElo   Int      @default(800)
+  season       Int      @default(1)
+  lastMatchAt  DateTime @default(now())
+}
+
+model Inventory {
+  userId           String   @id
+  user             User     @relation(fields: [userId], references: [id])
+  coins            Int      @default(500)
+  gems             Int      @default(10)
+  unlockedAvatars  String[] @default(["default"])
+  unlockedTileSkins String[] @default(["classic"])
+  unlockedTableSkins String[] @default(["classic_green"])
+  equippedTileSkin String   @default("classic")
+  equippedAvatar   String   @default("default")
+  equippedTable    String   @default("classic_green")
+  powerUps         Json     @default("{}") // Store powerup quantities
+}
+
+model BattlePass {
+  id        String           @id @default(cuid())
+  season    Int              @unique
+  name      String
+  isActive  Boolean          @default(true)
+  startDate DateTime
+  endDate   DateTime
+  tiers     BattlePassTier[]
+}
+
+model BattlePassTier {
+  id             String @id @default(cuid())
+  bpId           String
+  battlePass     BattlePass @relation(fields: [bpId], references: [id])
+  level          Int
+  requiredXP     Int
+  freeReward     Json?
+  premiumReward  Json?
+}
+
+model UserBattlePass {
+  userId              String @id
+  user                User   @relation(fields: [userId], references: [id])
+  bpId                String
+  xp                  Int    @default(0)
+  level               Int    @default(1)
+  isPremium           Boolean @default(false)
+  isElite             Boolean @default(false)
+  claimedFreeTiers    Int[]
+  claimedPremiumTiers Int[]
+}
+
+model Referral {
+  id          String   @id @default(cuid())
+  referrerId  String
+  referrer    User     @relation("Referrer", fields: [referrerId], references: [id])
+  inviteeId   String   @unique
+  invitee     User     @relation("Invitee", fields: [inviteeId], references: [id])
+  status      String   @default("pending")
+  rewardClaimed Boolean @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model ReferralReward {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  amount    Int
+  claimed   Boolean  @default(false)
+  senderId  String?
+  createdAt DateTime @default(now())
+}
+
+model Clan {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  tag         String       @unique
+  description String
+  ownerId     String
+  level       Int          @default(1)
+  points      Int          @default(0)
+  warPoints   Int          @default(0)
+  logo        String
+  isPublic    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  members     ClanMember[]
+  territories ClanTerritory[]
+}
+
+model ClanMember {
+  userId             String   @id
+  user               User     @relation(fields: [userId], references: [id])
+  clanId             String
+  clan               Clan     @relation(fields: [clanId], references: [id])
+  username           String
+  role               String   @default("member")
+  joinedAt           DateTime @default(now())
+  contributionPoints Int      @default(0)
+  weeklyWarPoints    Int      @default(0)
+}
+
+model ClanTerritory {
+  id                String  @id @default(cuid())
+  name              String  @unique
+  region            String
+  ownerClanId       String?
+  ownerClan         Clan?   @relation(fields: [ownerClanId], references: [id])
+  bonusMultiplier   Float   @default(1.1)
+  warPointsRequired Int     @default(1000)
+}
+
+model Achievement {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  achievementId String
+  unlockedAt   DateTime @default(now())
+  progress     Int      @default(0)
+
+  @@unique([userId, achievementId])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        String
+  amount      Int
+  currency    String
+  itemId      String?
+  itemType    String?
+  description String
+  createdAt   DateTime @default(now())
+}
+
+model ShopItem {
+  id          String   @id @default(cuid())
+  type        String
+  name        String
+  description String
+  price       Int
+  currency    String
+  rarity      String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model LiveOpsEvent {
+  id                String   @id @default(cuid())
+  type              String
+  name              String
+  description       String
+  xpMultiplier      Float    @default(1.0)
+  coinMultiplier    Float    @default(1.0)
+  startTime         DateTime
+  endTime           DateTime
+  isActive          Boolean  @default(true)
+  settingsOverride  Json?
+}
+
+model GameHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  gameId      String
+  mode        String
+  result      String
+  opponentId  String?
+  opponentName String?
+  eloChange   Int?
+  coinsEarned Int      @default(0)
+  xpEarned    Int      @default(0)
+  duration    Int
+  playedAt    DateTime @default(now())
+}

@@ -1,0 +1,234 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+@theme {
+  /* Palette principale: viola profondi e neutri scuri */
+  --color-primary: hsl(247 72% 60%);
+  --color-primary-dark: hsl(247 72% 46%);
+  --color-primary-glow: hsl(247 72% 60% / 0.18);
+
+  /* Sfondo: quasi-nero con leggera tinta blue-viola */
+  --color-dark-bg: hsl(240 22% 4%);
+  --color-dark-card: hsl(240 20% 6%);
+  --color-dark-surface: hsl(240 18% 8%);
+  --color-dark-border: hsl(240 16% 12%);
+}
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+  --font-playfair: 'Playfair Display', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  color-scheme: dark;
+}
+
+/* ==== BASE ==== */
+@layer base {
+  body {
+    @apply bg-dark-bg text-slate-200 antialiased;
+    margin: 0;
+    font-family: var(--font-inter);
+    /* Gradiente globale sottile viola sullo sfondo del body */
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, hsl(247 72% 18% / 0.22) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, hsl(235 60% 12% / 0.18) 0%, transparent 55%);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  code,
+  pre {
+    font-family: var(--font-mono);
+  }
+
+  .noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.025;
+    z-index: 9999;
+    pointer-events: none;
+    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+    filter: contrast(130%) brightness(100%);
+  }
+
+  ::selection {
+    background: hsl(262 72% 58% / 0.28);
+  }
+}
+
+/* ==== UTILITIES ==== */
+@layer utilities {
+  .font-playfair {
+    font-family: var(--font-playfair), serif;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono), monospace;
+  }
+
+  /* Testo viola chiaro */
+  .text-primary-muted {
+    color: hsl(247 60% 72%);
+  }
+
+  /* Glassmorphism con tinta blue-viola */
+  .glass {
+    background: hsl(247 20% 8% / 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(247 30% 16% / 0.5);
+  }
+
+  /* Card con bordo blue-viola */
+  .card-violet {
+    background: hsl(240 20% 6%);
+    border: 1px solid hsl(240 18% 11%);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card-violet:hover {
+    border-color: hsl(247 72% 60% / 0.28);
+    box-shadow: 0 8px 40px -10px hsl(247 72% 50% / 0.1);
+  }
+
+  /* Shimmer subtle */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .btn-shimmer:hover::after {
+    transform: translateX(100%);
+  }
+
+  /* Bordo superiore gradiente viola */
+  .border-top-violet::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(247 72% 58% / 0.5), transparent);
+  }
+
+  /* Divisore sezione */
+  .section-divider {
+    position: relative;
+  }
+
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(247 72% 58% / 0.3), transparent);
+  }
+}
+
+/* ==== ANIMATIONS ==== */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 7s ease-in-out infinite;
+}
+
+/* ==== INTERACTIVE ==== */
+
+/* Code blocks */
+.code-block-hover {
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+
+.code-block-hover:hover {
+  border-color: hsl(247 72% 58% / 0.25);
+  box-shadow: 0 0 50px -15px hsl(247 72% 58% / 0.12);
+}
+
+/* Nav link */
+.nav-link {
+  position: relative;
+  transition: color 0.25s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 1.5px;
+  background: hsl(247 65% 68%);
+  border-radius: 99px;
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 70%;
+  left: 15%;
+}
+
+.nav-link:hover {
+  color: hsl(247 60% 78%);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(240 22% 4%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(247 40% 25%);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(247 72% 48%);
+}

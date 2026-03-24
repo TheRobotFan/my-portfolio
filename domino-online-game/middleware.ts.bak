@@ -1,0 +1,18 @@
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { verifyToken } from '@/lib/auth-jwt'
+
+export async function middleware(request: NextRequest) {
+    // Pass-through for debugging
+    return NextResponse.next()
+}
+
+export const config = {
+    matcher: [
+        '/game/:path*',
+        '/multiplayer/:path*',
+        '/profile/:path*',
+        '/ranked/:path*',
+        '/social/clans/:path*',
+    ],
+}

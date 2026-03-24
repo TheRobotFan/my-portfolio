@@ -1,0 +1,4 @@
+import { NextApiRequest, NextApiResponse } from 'next'
+import SocketHandler from '@/lib/websocket-server'
+
+export default SocketHandler
