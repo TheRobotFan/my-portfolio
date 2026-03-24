@@ -43,7 +43,7 @@ export async function submitContactForm(data: ContactFormData & { _trap?: string
     // ─────────────────────────────────────────────────────────────────────────
     // 1. Rate Limiting — get client IP from request headers.
     // ─────────────────────────────────────────────────────────────────────────
-    const headersList = headers();
+    const headersList = await headers();
     const ip =
         headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
         headersList.get("x-real-ip") ||
